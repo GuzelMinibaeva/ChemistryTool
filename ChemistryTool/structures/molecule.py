@@ -13,9 +13,12 @@ class Molecule(Isomorphism, MoleculeABC):
             raise KeyError
         else:
             self._atoms[number] = element
+            self._bonds[number] = {}
 
     def add_bond(self, start_atom: int, end_atom: int, bond_type: int):
-        if start_atom in self._bonds and end_atom in self._bonds[start_atom] and start_atom != end_atom:
+        if start_atom not in self._atoms or end_atom not in self._atoms:
+            raise KeyError
+        elif start_atom in self._bonds and end_atom in self._bonds[start_atom]:
             raise KeyError
         elif start_atom == end_atom:
             raise KeyError
