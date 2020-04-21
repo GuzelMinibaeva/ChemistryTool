@@ -19,7 +19,16 @@ class MoleculeList(MoleculeListABC):
 
     def __setitem__(self, i, molecule):
         test, molecule = tee(molecule, 2)
-        pass  # todo: homework!
+        if isinstance(i, slice):
+            for j in test:
+                if not isinstance(j, Molecule):
+                    raise TypeError
+            else:
+                raise TypeError
+        else:
+            if isinstance(molecule, Molecule):
+                self._data[i] = molecule
+
 
 
 class Reaction(ReactionABC):
@@ -36,4 +45,4 @@ class Reaction(ReactionABC):
         return self._products
 
 
-__all__ = ['Reaction']
+__all__ = ['MoleculeList', 'Reaction']

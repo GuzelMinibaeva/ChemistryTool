@@ -1,3 +1,4 @@
+from typing import Dict
 from .abc import IsomorphismABC
 
 
