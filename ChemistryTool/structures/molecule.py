@@ -30,16 +30,30 @@ class Molecule(Isomorphism, MoleculeABC):
         pass
 
     def __enter__(self):
-        pass
+        self._atoms_res = self._atoms.copy()
+        self._bonds_res = {}
+        for i in self._bonds:
+            self._bonds_res[i] = {}
+        for key, value in self._bonds:
+            self._bonds_res[key] = value.copy()
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        pass
+        if exc_val:
+            self._atoms = self._atoms_res
+            for key, value in self._bonds_res.items():
+                self._bonds[key] = value
+            del self._atoms_res
+            del self._bonds_res
+        else:
+            del self._atoms_res
+            del self._bonds_res
 
     def __str__(self):
         counter = Counter(self._atoms.values())
         out = list()
-        for k, v in counter.items():
-            out.append(k + str(v))
+        for key, value in counter.items():
+            out.append(key + str(value))
         return ''.join(out)
 
     def add_atom(self, element: str, number: int):
