@@ -18,17 +18,20 @@ class MoleculeList(MoleculeListABC):
         return self._data[i]
 
     def __setitem__(self, i, molecule):
-        test, molecule = tee(molecule, 2)
         if isinstance(i, slice):
-            for j in test:
-                if not isinstance(j, Molecule):
-                    raise TypeError
-            else:
-                raise TypeError
+            try:
+                test, molecule = tee(molecule, 2)
+                if all(isinstance(x, Molecule) for x in test):
+                    self._data[i] = molecule
+                else:
+                    raise KeyError
+            except TypeError:
+                if isinstance(molecule, Molecule):
+                    self._data[i] = molecule
+        elif isinstance(molecule, Molecule):
+            self._data[i] = molecule
         else:
-            if isinstance(molecule, Molecule):
-                self._data[i] = molecule
-
+            return TypeError
 
 
 class Reaction(ReactionABC):

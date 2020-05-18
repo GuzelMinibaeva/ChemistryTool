@@ -5,11 +5,44 @@ from ..periodictable.element import Element
 
 
 class Molecule(Isomorphism, MoleculeABC):
+    def add_atom(self, element: str, number: int):
+        if number in self._atoms:
+            raise KeyError
+        else:
+            self._atoms[number] = element
+            self._bonds[number] = {}
+
+    def add_bond(self, start_atom: int, end_atom: int, bond_type: int):
+        if start_atom not in self._atoms or end_atom not in self._atoms:
+            raise KeyError
+        elif start_atom in self._bonds[end_atom] or end_atom in self._bonds[start_atom]:
+            raise KeyError
+        elif start_atom == end_atom:
+            raise KeyError
+        else:
+            self._bonds[start_atom][end_atom] = bond_type
+            self._bonds[end_atom][start_atom] = bond_type
+
     def get_atom(self, number: int) -> Element:
         return self._atoms[number]
 
     def get_bond(self, start_atom: int, end_atom: int) -> int:
         return self._bonds[start_atom][end_atom]
+
+    def update_atom(self, element: Element, number: int):
+        if number not in self._atoms:
+            raise KeyError
+        else:
+            self._atoms[number] = element
+
+    def update_bond(self, start_atom: int, end_atom: int, bond_type: int):
+        if start_atom not in self._bonds[end_atom] or end_atom not in self._bonds[start_atom]:
+            raise KeyError
+        elif start_atom == end_atom:
+            raise KeyError
+        else:
+            self._bonds[start_atom][end_atom] = bond_type
+            self._bonds[end_atom][start_atom] = bond_type
 
     def delete_atom(self, number: int):
         del self._atoms[number]
@@ -22,12 +55,6 @@ class Molecule(Isomorphism, MoleculeABC):
     def delete_bond(self, start_atom: int, end_atom: int):
         del self._bonds[start_atom][end_atom]
         del self._bonds[end_atom][start_atom]
-
-    def update_atom(self, element: Element, number: int):
-        pass
-
-    def update_bond(self, start_atom: int, end_atom: int, bond_type: int):
-        pass
 
     def __enter__(self):
         self._atoms_res = self._atoms.copy()
@@ -55,24 +82,6 @@ class Molecule(Isomorphism, MoleculeABC):
         for key, value in counter.items():
             out.append(key + str(value))
         return ''.join(out)
-
-    def add_atom(self, element: str, number: int):
-        if number in self._atoms:
-            raise KeyError
-        else:
-            self._atoms[number] = element
-            self._bonds[number] = {}
-
-    def add_bond(self, start_atom: int, end_atom: int, bond_type: int):
-        if start_atom not in self._atoms or end_atom not in self._atoms:
-            raise KeyError
-        elif start_atom in self._bonds[end_atom] or end_atom in self._bonds[start_atom]:
-            raise KeyError
-        elif start_atom == end_atom:
-            raise KeyError
-        else:
-            self._bonds[start_atom][end_atom] = bond_type
-            self._bonds[end_atom][start_atom] = bond_type
 
 
 __all__ = ['Molecule']
