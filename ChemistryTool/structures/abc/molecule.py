@@ -1,13 +1,16 @@
 from abc import ABC, abstractmethod
 from typing import Dict
-from ...algorithms.abc import IsomorphismABC
+from ...algorithms.abc import IsomorphismABC, ComponentsABC
 from ...periodictable.element import Element
 
 
-class MoleculeABC(IsomorphismABC, ABC):
+class MoleculeABC(IsomorphismABC, ComponentsABC, ABC):
+    __slots__ = ('_atoms', '_bonds', '_charges', '_backup_atoms', '_backup_bonds')
+
     def __init__(self):
-        self._atoms: Dict[int, str] = {}
+        self._atoms: Dict[int, Element] = {}
         self._bonds: Dict[int, Dict[int, int]] = {}
+        self._charges: Dict[int, int] = {}
 
     @abstractmethod
     def get_atom(self, number: int) -> Element:
@@ -18,7 +21,8 @@ class MoleculeABC(IsomorphismABC, ABC):
         ...
 
     @abstractmethod
-    def add_atom(self, element: Element, number: int):
+    def add_atom(self, element: Element, number: int, charge: int = 0):
+        # todo:  element.attach(self, number)
         ...
 
     @abstractmethod
